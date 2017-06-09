@@ -1,4 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
 <dom-module id="omdb-search-exam-app">
   <template>
@@ -7,7 +10,25 @@
         display: block;
       }
     </style>
+
     <h2>Hello [[prop1]]!</h2>
+
+    <!-- Looks like OBDb is not free anymore, using themoviedb instead -->
+    <iron-ajax
+      auto
+      url="https://api.themoviedb.org/3/search/movie"
+      params='{{requestParams}}'
+      handle-as="json"
+      on-response="handleResponse"
+      debouce-duration="300"
+    ></iron-ajax>
+
+    <paper-input value="{{requestParams.query}}"></paper-input>
+
+    <template is="dom-repeat" items="{{movies}}" as="movie">
+      <p>{{movie.title}}</p>
+    </template>
+
   </template>
 
   <script>
@@ -19,11 +40,26 @@
       static get is() { return 'omdb-search-exam-app'; }
       static get properties() {
         return {
-          prop1: {
-            type: String,
-            value: 'OMDb-Search-Exam-app'
+          requestParams: {
+            type: Object,
+            value: function(){ return {
+              api_key: 'afb4449b08bf540b098d1ed1aa52eba3'
+            };}
+          },
+          movies: {
+            type: Array,
+            value: function(){return [];}
           }
         };
+      }
+      handleResponse(e){
+        console.log(e);
+        try{
+          this.set('movies', e.detail.response.results);
+        }catch(err){
+          console.error('I could not read the movie results, here is the error', err);
+          console.error('and here is the event', e);
+        }
       }
     }
 
