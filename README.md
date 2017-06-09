@@ -1,6 +1,8 @@
 # OMDb-Search-Exam
 Search the OMDb API
 
+The library [Polymer 2.0](https://www.polymer-project.org/) was used to create Web Components. You can serve the site locally from build/
+
 ## Task Details
 - Consume the [OMDb API](http://www.omdbapi.com/) to fetch the top 10 results matching your search query (JSON).
 - Create an interface with at least one input field to be used to search for movies by title.

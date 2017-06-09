@@ -1,0 +1,7 @@
+{
+  "name": "OMDb-Search-Exam",
+  "short_name": "OMDb-Search-Exam",
+  "description": "Exam solved by João Paulo Soares to job offered by iLabSinc.",
+  "start_url": "/",
+  "display": "standalone"
+}
