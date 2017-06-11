@@ -1,0 +1,55 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="list-view" >
+  <template>
+
+    <h2>List</h2>
+
+    <!-- Looks like OBDb is not free anymore, using themoviedb instead -->
+    <iron-ajax
+      auto
+      url="https://api.themoviedb.org/3/search/movie"
+      params='{{requestParams}}'
+      handle-as="json"
+      on-response="handleResponse"
+      debouce-duration="300"
+    ></iron-ajax>
+
+    <paper-input value="{{requestParams.query}}"></paper-input>
+
+    <template is="dom-repeat" items="{{movies}}" as="movie">
+      <p>{{movie.title}}</p>
+    </template>
+
+  </template>
+  <script>
+    class ListView extends Polymer.Element{
+      static get is() { return 'list-view'; }
+      static get properties() {
+        return {
+          requestParams: {
+            type: Object,
+            value: function(){ return {
+              api_key: 'afb4449b08bf540b098d1ed1aa52eba3'
+            };}
+          },
+          movies: {
+            type: Array,
+            value: function(){return [];}
+          }
+        };
+      }
+      handleResponse(e){
+        console.log(e);
+        try{
+          this.set('movies', e.detail.response.results);
+        }catch(err){
+          console.error('I could not read the movie results, here is the error', err);
+          console.error('and here is the event', e);
+        }
+      }
+    }
+
+    customElements.define(ListView.is, ListView);
+  </script>
+</dom-module >

@@ -1,7 +1,14 @@
+<!-- Imports {{{-->
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="List-view/list-view.html">
+<link rel="import" href="Detail-view/detail-view.html">
+<!-- }}} End of Imports -->
 
 <dom-module id="omdb-search-exam-app">
   <template>
@@ -11,23 +18,25 @@
       }
     </style>
 
-    <h2>Hello [[prop1]]!</h2>
+    <!-- Routing {{{ -->
+    <app-location route="{{route}}"></app-location>
+    <app-route
+      route="{{route}}"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subroute}}"
+    ></app-route>
+    <!-- }}} End of Routing -->
 
-    <!-- Looks like OBDb is not free anymore, using themoviedb instead -->
-    <iron-ajax
-      auto
-      url="https://api.themoviedb.org/3/search/movie"
-      params='{{requestParams}}'
-      handle-as="json"
-      on-response="handleResponse"
-      debouce-duration="300"
-    ></iron-ajax>
-
-    <paper-input value="{{requestParams.query}}"></paper-input>
-
-    <template is="dom-repeat" items="{{movies}}" as="movie">
-      <p>{{movie.title}}</p>
-    </template>
+    <iron-pages
+      selected="{{checkIfEmpty(routeData.page)}}"
+      fallback-selection="pageNotFound"
+      attr-for-selected="name"
+    >
+      <list-view name="list"></list-view>
+      <detail-view name="detail"></detail-view>
+      <div name="pageNotFound">Sorry, I couldn't find this movie.</div>
+    </iron-pages>
 
   </template>
 
@@ -38,28 +47,9 @@
      */
     class OMDbSearchExamApp extends Polymer.Element {
       static get is() { return 'omdb-search-exam-app'; }
-      static get properties() {
-        return {
-          requestParams: {
-            type: Object,
-            value: function(){ return {
-              api_key: 'afb4449b08bf540b098d1ed1aa52eba3'
-            };}
-          },
-          movies: {
-            type: Array,
-            value: function(){return [];}
-          }
-        };
-      }
-      handleResponse(e){
-        console.log(e);
-        try{
-          this.set('movies', e.detail.response.results);
-        }catch(err){
-          console.error('I could not read the movie results, here is the error', err);
-          console.error('and here is the event', e);
-        }
+      checkIfEmpty(page){
+        if(!page) { return 'list'; }
+        else { return page; }
       }
     }
 
