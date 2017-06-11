@@ -1,6 +1,7 @@
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="list-item.html">
 
-<dom-module id="list-view" >
+<dom-module id="list-view">
   <template>
 
     <h2>List</h2>
@@ -12,13 +13,14 @@
       params='{{requestParams}}'
       handle-as="json"
       on-response="handleResponse"
+      on-error="handleError"
       debouce-duration="300"
     ></iron-ajax>
 
     <paper-input value="{{requestParams.query}}"></paper-input>
 
     <template is="dom-repeat" items="{{movies}}" as="movie">
-      <p>{{movie.title}}</p>
+      <list-item movie-meta-data="{{movie}}"></list-item>
     </template>
 
   </template>
@@ -46,6 +48,13 @@
         }catch(err){
           console.error('I could not read the movie results, here is the error', err);
           console.error('and here is the event', e);
+        }
+      }
+      handleError(e){
+        if(!this.requestParams.query || this.requestParams.query === ''){
+          this.set('movies', []);
+        }else{
+          console.error('iron-ajax error', e.detail);
         }
       }
     }

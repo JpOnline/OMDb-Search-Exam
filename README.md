@@ -1,7 +1,16 @@
-# OMDb-Search-Exam
-Search the OMDb API
+# iLabSinc Exam done by João Paulo Soares
 
 The library [Polymer 2.0](https://www.polymer-project.org/) was used to create Web Components. You can serve the site locally from build/
+
+## To run the project
+
+```bash
+npm install -g polymer-cli
+polymer serve -o --open-path /
+```
+
+# OMDb-Search-Exam
+Search the OMDb API
 
 ## Task Details
 - Consume the [OMDb API](http://www.omdbapi.com/) to fetch the top 10 results matching your search query (JSON).

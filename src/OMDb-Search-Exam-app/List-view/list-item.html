@@ -1,0 +1,61 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="list-item">
+  <template>
+
+    <style>
+      .container {
+        box-shadow: 10px 10px 5px #aaaaaa;
+        background-color: #fff;
+        margin: 5px;
+        display: flex;
+        flex-direction: row;
+      }
+      .content{
+        margin: 0px 22px;
+        font-size: larger;
+      }
+      h2{
+        text-align: center;
+      }
+      p{
+        text-align: justify;
+      }
+    </style>
+
+    <div class="container">
+      <div>
+        <img src="http://image.tmdb.org/t/p/w185{{movieMetaData.poster_path}}"></img>
+      </div>
+      <div class="content">
+        <h2>{{movieMetaData.title}}</h2>
+        <p>{{movieMetaData.overview}}</p>
+      </div>
+    </div>
+
+    <!-- Looks like OBDb is not free anymore, using themoviedb instead -->
+    <!-- <iron&#45;ajax -->
+    <!--   auto -->
+    <!--   url="https://api.themoviedb.org/3/search/movie" -->
+    <!--   params='{{requestParams}}' -->
+    <!--   handle&#45;as="json" -->
+    <!--   on&#45;response="handleResponse" -->
+    <!--   debouce&#45;duration="300" -->
+    <!-- ></iron&#45;ajax> -->
+
+  </template>
+  <script>
+    class ListItem extends Polymer.Element{
+      static get is() { return 'list-item'; }
+      static get properties() {
+        return {
+          movieMetaData: {
+            type: Object
+          },
+        };
+      }
+    }
+
+    customElements.define(ListItem.is, ListItem);
+  </script>
+</dom-module >
