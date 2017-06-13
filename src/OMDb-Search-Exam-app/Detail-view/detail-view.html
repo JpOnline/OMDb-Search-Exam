@@ -1,15 +1,124 @@
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../../bower_components/app-route/app-route.html">
 
-<dom-module id="detail-view" >
+<dom-module id="detail-view">
   <template>
+    <style> /* {{{ */
+      .container{
+        background-color: white;
+        margin: 5px 10px;
+        box-shadow: 0px 3px 18px 5px #7d7d7d;
+        padding: 10px;
+      }
+      .header{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      img{
+        border: 2px;
+        border-style: solid;
+        border-color: #3c3c3c;
+        margin-right: 9px;
+      }
+      .second-column{
+        padding: 0 10px;
+        margin-left: 9px;
+      }
+      .overview{
+        padding: 0px 10px;
+        margin-bottom: 12px;
+        font-size: x-large;
+      }
+      .detail-category{
+        font-size: 120%;
+        font-weight: bold;
+      }
+    </style> <!-- }}} -->
 
-    <h2>Detail</h2>
+    <div class="container"> <!-- {{{ -->
+      <div class="header"> <!-- {{{ -->
+        <img src="http://image.tmdb.org/t/p/w342{{movieDetails.poster_path}}"
+        alt="movie poster" width="280" height="420"></img>
+        <div class="second-column"> <!-- {{{ -->
+          <h1>{{movieDetails.title}} <br>
+          <span style="font-size: 65%">{{movieDetails.tagline}}</span></h1>
+
+          <p><span class="detail-category">Genres</span>
+          <template is="dom-repeat" items="{{movieDetails.genres}}" as="genre">
+            | {{genre.name}}
+          </template>
+           |
+          </p>
+
+          <p><span class="detail-category">Production Companies</span>
+          <template is="dom-repeat" items="{{movieDetails.production_companies}}" as="company">
+            | {{company.name}}
+          </template>
+           |
+          </p>
+
+          <p><span class="detail-category">Production Countries</span>
+          <template is="dom-repeat" items="{{movieDetails.production_countries}}" as="country">
+            | {{country.name}}
+          </template>
+           |
+          </p>
+
+          <p><span class="detail-category">Spoken Languages</span>
+          <template is="dom-repeat" items="{{movieDetails.spoken_languages}}" as="language">
+            | {{language.name}}
+          </template>
+           |
+          </p>
+
+          <p><span class="detail-category">Release Date</span>
+           | {{movieDetails.release_date}} |</p>
+
+          <p><span class="detail-category">Runtime</span>
+           | {{movieDetails.runtime}} | </p>
+
+          <p><span class="detail-category">Ratings</span>
+           | {{movieDetails.vote_average}} ({{movieDetails.vote_count}}) |</p>
+        </div><!-- class second-column }}}-->
+      </div><!-- class header }}}-->
+      <p class="overview">{{movieDetails.overview}}</p>
+    </div><!-- class container }}}-->
+
+    <!-- Routing {{{ -->
+    <app-route
+      route="{{subroute}}"
+      pattern="/:movieId"
+      data="{{routeData}}"
+    ></app-route>
+    <!-- }}} End of Routing -->
+
+    <iron-ajax
+      auto
+      url="https://api.themoviedb.org/3/movie/{{routeData.movieId}}"
+      params='{"api_key":"afb4449b08bf540b098d1ed1aa52eba3"}'
+      handle-as="json"
+      on-response="handleResponse"
+      debouce-duration="300"
+    ></iron-ajax>
   </template>
+
   <script>
     class DetailView extends Polymer.Element{
       static get is() { return 'detail-view'; }
+      static get properties() { return {
+        movieDetails: {
+          type: Object
+        }
+      };}
+      handleResponse(e){
+        console.log('detail Response', e.detail.response);
+        this.set('movieDetails', e.detail.response);
+      }
     }
 
     customElements.define(DetailView.is, DetailView);
   </script>
-</dom-module >
+</dom-module>
