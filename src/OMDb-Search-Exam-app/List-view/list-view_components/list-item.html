@@ -4,14 +4,15 @@
   <template>
 
     <style>
-      .container {
+      :host {
         box-shadow: 10px 10px 5px #aaaaaa;
         background-color: #fff;
         margin: 5px;
         display: flex;
         flex-direction: row;
+        align-items: center;
       }
-      .content{
+      .description{
         margin: 0px 22px;
         font-size: larger;
       }
@@ -23,14 +24,10 @@
       }
     </style>
 
-    <div class="container">
-      <div>
-        <img src="http://image.tmdb.org/t/p/w185{{movieMetaData.poster_path}}"></img>
-      </div>
-      <div class="content">
-        <h2>{{movieMetaData.title}}</h2>
-        <p>{{movieMetaData.overview}}</p>
-      </div>
+    <img width="182" src="{{imgSrc}}" onerror="{{setErrorImg()}}"></img>
+    <div class="description">
+      <h2>{{movieMetaData.title}}</h2>
+      <p>{{movieMetaData.overview}}</p>
     </div>
 
   </template>
@@ -42,7 +39,18 @@
           movieMetaData: {
             type: Object
           },
+          imgSrc: {
+            type: String,
+            computed: 'setImgSrc(movieMetaData.poster_path)'
+          }
         };
+      }
+      setImgSrc(path){
+        if(path == null){
+          return this.resolveUrl('errorImg.png');
+        }else{
+          return `http://image.tmdb.org/t/p/w185/${path}`;
+        }
       }
     }
 
