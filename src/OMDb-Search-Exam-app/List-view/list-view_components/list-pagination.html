@@ -1,0 +1,181 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="../../../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<dom-module id="list-pagination">
+  <template>
+    <style> /* {{{ */
+      :host {
+        display: flex;
+        justify-content: space-between;
+        font-size: 150%;
+        padding: 5px 0;
+      }
+      .invisible{
+        visibility: hidden;
+      }
+      .previous-and-next{
+        padding: 0px 24px;
+        cursor: pointer;
+      }
+      .actualPage{
+        font-size: 70%;
+        cursor: default;
+      }
+      .number{
+        padding: 0 6px;
+      }
+      span{
+        cursor: pointer;
+        align-self: center;
+      }
+    </style> <!-- }}} -->
+
+    <template is="dom-if" if="{{page}}">
+      <template is="dom-repeat" items="{{options}}">
+        <span on-tap="handleOption" class$="{{item.class}}">{{item.name}}</span>
+      </template>
+    </template>
+      <!-- Página atual {{page}} -->
+      <!-- <span on&#45;tap="previous">Previous</span> -->
+      <!-- 1 2 3 ... 2776 -->
+      <!-- <span on&#45;tap="next">Next</span> -->
+
+  </template>
+  <script>
+    class ListPagination extends Polymer.GestureEventListeners(Polymer.Element){
+      static get is() { return 'list-pagination'; }
+      static get properties() {
+        return {
+          page: {
+            type: Number,
+            notify: true,
+            observer: 'pageHasChanged',
+            value: 0
+          },
+          searchString: {
+            type: String,
+            observer: 'searchHasChanged'
+          },
+          totalPages: {
+            type: Number,
+            observer: 'checkTotalPages'
+          },
+          totalResults: {
+            type: Number
+          }
+        };
+      }
+      static get observers(){
+        return [
+          'pageHasChanged(page, totalPages)', 'pageHasChanged(searchString, totalPages)'
+        ];
+      }
+      searchHasChanged(search){
+        //Everytime the search is changed the page will be returned to 1 or the element will be hidden.
+        if(search === ''){
+          this.set('page', null);
+        }else{
+          this.set('page', 1);
+        }
+      }
+      checkTotalPages(){
+        // The api don't accepts access over page 1000.
+        if(this.totalPages > 1000){
+          this.set('totalPages', 1000);
+        }
+      }
+      pageHasChanged(){
+        // Fill a list of options and its classes
+        //for example: Previous 1 2 3 ... 200 Next
+
+        // Skip function if there's only one page (pagination is not necessary).
+        if(this.totalPages == 1){
+          this.set('options', []);
+          return;
+        }
+
+        let options = [];
+        let classes = 'previous-and-next';
+        if(this.page == 1){
+          classes += ' invisible';
+        }
+        options.push({
+          'class':classes,
+          'name':'Previous'
+        });
+
+        // The invisible class helps to maintain the position when not showing.
+        classes = 'number';
+        if(this.page < 3 || this.totalPages == 3){
+          classes += ' invisible';
+        }
+        options.push({
+          'class':classes,
+          'name':'1...'
+        });
+
+        let index;
+        // Handle when there's less then 3 pages.
+        let count = this.totalPages > 3 ? 3 : this.totalPages;
+        if(this.page == 1){
+          index = this.page;
+        }else if(this.page == this.totalPages){
+          index = this.page - 2;
+        }else{
+          index = this.page - 1;
+        }
+        for(let i = 0; i < count; i++){
+          let classes = 'number';
+          if(index == this.page){
+            classes += ' actualPage';
+          }
+          options.push({
+            'class':classes,
+            'name':index
+          });
+          index++;
+        }
+
+        classes = 'number';
+        console.log('totalPages', this.totalPages);
+        // The totalPages == 3 is handled to not have the number 3 shown twice.
+        if(this.page >= this.totalPages - 1 || this.totalPages == 3){
+          classes += ' invisible';
+        }
+        options.push({
+          'class':classes,
+          'name':'...' + this.totalPages
+        });
+
+        classes = 'previous-and-next';
+        if(this.page == this.totalPages){
+          classes += ' invisible';
+        }
+        options.push({
+          'class':classes,
+          'name':'Next'
+        });
+        this.set('options', options);
+        console.log('pageHasChanged', this.options);
+      }
+      handleOption(e){
+        console.log('handleOption', e);
+        let option = e.model.item.name;
+        if(option === "Previous"){
+          this.page--;
+        }else if(option === "Next"){
+          this.page++;
+        }else{
+          if(typeof option == 'string'){
+            option = option.replace('...', ''); // Remove possible "..."
+          }
+          this.set('page', Number.parseInt(option));
+        }
+      }
+    }
+
+    customElements.define(ListPagination.is, ListPagination);
+  </script>
+</dom-module>

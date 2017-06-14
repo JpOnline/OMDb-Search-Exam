@@ -1,10 +1,14 @@
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="list-item.html">
+<link rel="import" href="../../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="list-view_components/list-item.html">
+<link rel="import" href="list-view_components/list-pagination.html">
 
 <dom-module id="list-view">
   <template>
-    <style>
+    <style> /* {{{ */
       div{
         box-shadow: 1px 1px 1px 1px;
         background-color: white;
@@ -13,11 +17,24 @@
       h1{
         text-align: center;
       }
+      paper-input{
+        box-shadow: 0 0 4px 1px black;
+        padding: 0 5px;
+        --paper-input-container-underline: {
+          display: none;
+        };
+        --paper-input-container-underline-focus: {
+          display: none;
+        };
+        --paper-input-container-underline-disabled: {
+          display: none;
+        };
+      }
       a{
         color: inherit;
         text-decoration: none;
       }
-    </style>
+    </style> <!-- }}} -->
 
     <!-- Looks like OBDb is not free anymore, using themoviedb instead -->
     <iron-ajax
@@ -32,12 +49,23 @@
 
     <div>
       <h1>iLabSinc API Test</h1>
-      <paper-input label="Movie Search" placeholder="Movie by Title" value="{{requestParams.query}}"></paper-input>
-    </div>
+      <paper-input label="Movie Search by Title" value="{{requestParams.query}}">
+        <iron-icon icon="search" slot="suffix"></iron-icon>
+      </paper-input>
+      <list-pagination
+        search-string="[[requestParams.query]]"
+        page="{{requestParams.page}}"
+        total-pages="[[response.total_pages]]"
+      ></list-pagination>
 
-    <template is="dom-repeat" items="{{movies}}" as="movie">
-      <a href="/detail/{{movie.id}}"><list-item movie-meta-data="{{movie}}"></list-item></a>
-    </template>
+      <!-- List of movies {{{ -->
+      <template is="dom-repeat" items="{{response.results}}" as="movie">
+        <a href="/detail/{{movie.id}}"><list-item movie-meta-data="{{movie}}"></list-item></a>
+      </template>
+      <!-- End of List of movies }}} -->
+
+      <list-pagination page="[[requestParams.page]]" total-pages="[[response.total_pages]]"></list-pagination>
+    </div>
 
   </template>
   <script>
@@ -51,16 +79,16 @@
               api_key: 'afb4449b08bf540b098d1ed1aa52eba3'
             };}
           },
-          movies: {
-            type: Array,
-            value: function(){return [];}
+          response: {
+            type: Object,
+            value: function(){return {};}
           }
         };
       }
       handleResponse(e){
         console.log(e);
         try{
-          this.set('movies', e.detail.response.results);
+          this.set('response', e.detail.response);
         }catch(err){
           console.error('I could not read the movie results, here is the error', err);
           console.error('and here is the event', e);
@@ -68,7 +96,7 @@
       }
       handleError(e){
         if(!this.requestParams.query || this.requestParams.query === ''){
-          this.set('movies', []);
+          this.set('response.results', []);
         }else{
           console.error('iron-ajax error', e.detail);
         }
