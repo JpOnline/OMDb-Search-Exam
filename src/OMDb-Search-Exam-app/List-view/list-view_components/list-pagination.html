@@ -90,6 +90,8 @@
         // Fill a list of options and its classes
         //for example: Previous 1 2 3 ... 200 Next
 
+        //TODO: Send an event to update the interface with a loading element (e.g. spinner).
+
         // Skip function if there's only one page (pagination is not necessary).
         if(this.totalPages == 1){
           this.set('options', []);

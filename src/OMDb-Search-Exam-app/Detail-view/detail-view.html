@@ -1,6 +1,7 @@
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../../../bower_components/polymer/lib/elements/dom-if.html">
 <link rel="import" href="../../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 
@@ -76,42 +77,57 @@
           <span style="font-size: 65%">{{movieDetails.tagline}}</span></h1>
 
           <!-- Details {{{ -->
-          <p><span class="detail-category">Genres</span>
-          <template is="dom-repeat" items="{{movieDetails.genres}}" as="genre">
-            | {{genre.name}}
+          <template is="dom-if" if="{{notEmpty(movieDetails.genres)}}">
+            <p><span class="detail-category">Genres</span>
+            <template is="dom-repeat" items="{{movieDetails.genres}}" as="genre">
+              | {{genre.name}}
+            </template>
+             |
+            </p>
           </template>
-           |
-          </p>
 
-          <p><span class="detail-category">Production Companies</span>
-          <template is="dom-repeat" items="{{movieDetails.production_companies}}" as="company">
-            | {{company.name}}
+          <!-- The information can be empty, so the detail category is not shown if so.  -->
+          <template is="dom-if" if="{{notEmpty(movieDetails.production_companies)}}">
+            <p><span class="detail-category">Production Companies</span>
+            <template is="dom-repeat" items="{{movieDetails.production_companies}}" as="company">
+              | {{company.name}}
+            </template>
+             |
+            </p>
           </template>
-           |
-          </p>
 
-          <p><span class="detail-category">Production Countries</span>
-          <template is="dom-repeat" items="{{movieDetails.production_countries}}" as="country">
-            | {{country.name}}
+          <template is="dom-if" if="{{notEmpty(movieDetails.production_countries)}}">
+            <p><span class="detail-category">Production Countries</span>
+            <template is="dom-repeat" items="{{movieDetails.production_countries}}" as="country">
+              | {{country.name}}
+            </template>
+             |
+            </p>
           </template>
-           |
-          </p>
 
-          <p><span class="detail-category">Spoken Languages</span>
-          <template is="dom-repeat" items="{{movieDetails.spoken_languages}}" as="language">
-            | {{language.name}}
+          <template is="dom-if" if="{{notEmpty(movieDetails.spoken_languages)}}">
+            <p><span class="detail-category">Spoken Languages</span>
+            <template is="dom-repeat" items="{{movieDetails.spoken_languages}}" as="language">
+              | {{language.name}}
+            </template>
+             |
+            </p>
           </template>
-           |
-          </p>
 
-          <p><span class="detail-category">Release Date</span>
-           | {{movieDetails.release_date}} |</p>
+          <template is="dom-if" if="{{movieDetails.release_date}}">
+            <p><span class="detail-category">Release Date</span>
+             | {{formatDate(movieDetails.release_date)}} |</p>
+           </template>
 
-          <p><span class="detail-category">Runtime</span>
-           | {{movieDetails.runtime}} | </p>
+           <template is="dom-if" if="{{movieDetails.runtime}}">
+            <p><span class="detail-category">Runtime</span>
+             | {{formatTime(movieDetails.runtime)}} | </p>
+           </template>
 
-          <p><span class="detail-category">Ratings</span>
-           | {{movieDetails.vote_average}} ({{movieDetails.vote_count}}) |</p>
+           <template is="dom-if" if="{{movieDetails.vote_average}}">
+            <p><span class="detail-category">Ratings</span>
+             | {{movieDetails.vote_average}} ({{movieDetails.vote_count}}) |</p>
+           </template>
            <!-- End of Details }}} -->
         </div><!-- class second-column }}}-->
       </div><!-- class header }}}-->
@@ -129,11 +145,30 @@
         }
       };}
       handleResponse(e){
-        console.log('detail Response', e.detail.response);
         this.set('movieDetails', e.detail.response);
+      }
+      formatDate(releaseDate){
+        // TODO: use an external library to handle date and time.
+        var d = new Date(releaseDate);
+        return d.toLocaleDateString();
+      }
+      formatTime(runtime){
+        // TODO: use an external library to handle date and time.
+        var hour = Math.floor(runtime / 60);
+        var minutes = runtime % 60;
+        minutes = minutes < 10 ? '0'+minutes : minutes; //put an extra zero if necessary.
+        return hour + ':' + minutes + ':00';
       }
       previousPage(){
         window.history.back();
+      }
+      notEmpty(value){
+        // Check if there's a value to show.
+        if(typeof value == 'object' && value.length == 0){
+          return false;
+        }else{
+          return value;
+        }
       }
     }
 
