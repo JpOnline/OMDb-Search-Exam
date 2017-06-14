@@ -4,9 +4,11 @@ The library [Polymer 2.0](https://www.polymer-project.org/) was used to create W
 
 ## To run the project
 
+Note that Node.js version 6.x or 7.x and NPM is required. 
+
 ```bash
-npm install -g polymer-cli
-polymer serve -o --open-path /
+npm install
+npm run polymer serve -o --open-path /
 ```
 
 # OMDb-Search-Exam

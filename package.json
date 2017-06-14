@@ -1,0 +1,33 @@
+{
+  "name": "ilabsinc_exam",
+  "version": "1.0.0",
+  "description": "Exam solved by João Paulo Soares to job offered by iLabSinc.",
+  "devDependencies": {
+    "bower": "^1.8.0",
+    "polymer-cli": "^1.2.0"
+  },
+  "scripts": {
+    "test": "polymer test",
+    "install": "bower install",
+    "bower": "bower",
+    "polymer": "polymer"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JpOnline/OMDb-Search-Exam.git"
+  },
+  "keywords": [
+    "Movie",
+    "api",
+    "polymer",
+    "webcomponent",
+    "spa",
+    "pwa"
+  ],
+  "author": "João Paulo Soares",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JpOnline/OMDb-Search-Exam/issues"
+  },
+  "homepage": "https://github.com/JpOnline/OMDb-Search-Exam#readme"
+}
