@@ -2,6 +2,7 @@
 <link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../../bower_components/polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 
 <dom-module id="detail-view">
   <template>
@@ -36,9 +37,37 @@
         font-size: 120%;
         font-weight: bold;
       }
+      .back-button{
+        font-size: 150%;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+      }
+      .back-button span{
+        font-size: 150%;
+        margin-right: 4px;
+      }
     </style> <!-- }}} -->
 
+    <!-- Routing {{{ -->
+    <app-route
+      route="{{subroute}}"
+      pattern="/:movieId"
+      data="{{routeData}}"
+    ></app-route>
+    <!-- }}} End of Routing -->
+
+    <iron-ajax
+      auto
+      url="https://api.themoviedb.org/3/movie/{{routeData.movieId}}"
+      params='{"api_key":"afb4449b08bf540b098d1ed1aa52eba3"}'
+      handle-as="json"
+      on-response="handleResponse"
+      debouce-duration="300"
+    ></iron-ajax>
+
     <div class="container"> <!-- {{{ -->
+      <div class="back-button" on-tap="previousPage"><span><</span> Back</div>
       <div class="header"> <!-- {{{ -->
         <img src="http://image.tmdb.org/t/p/w342{{movieDetails.poster_path}}"
         alt="movie poster" width="280" height="420"></img>
@@ -46,6 +75,7 @@
           <h1>{{movieDetails.title}} <br>
           <span style="font-size: 65%">{{movieDetails.tagline}}</span></h1>
 
+          <!-- Details {{{ -->
           <p><span class="detail-category">Genres</span>
           <template is="dom-repeat" items="{{movieDetails.genres}}" as="genre">
             | {{genre.name}}
@@ -82,31 +112,16 @@
 
           <p><span class="detail-category">Ratings</span>
            | {{movieDetails.vote_average}} ({{movieDetails.vote_count}}) |</p>
+           <!-- End of Details }}} -->
         </div><!-- class second-column }}}-->
       </div><!-- class header }}}-->
       <p class="overview">{{movieDetails.overview}}</p>
     </div><!-- class container }}}-->
 
-    <!-- Routing {{{ -->
-    <app-route
-      route="{{subroute}}"
-      pattern="/:movieId"
-      data="{{routeData}}"
-    ></app-route>
-    <!-- }}} End of Routing -->
-
-    <iron-ajax
-      auto
-      url="https://api.themoviedb.org/3/movie/{{routeData.movieId}}"
-      params='{"api_key":"afb4449b08bf540b098d1ed1aa52eba3"}'
-      handle-as="json"
-      on-response="handleResponse"
-      debouce-duration="300"
-    ></iron-ajax>
   </template>
 
   <script>
-    class DetailView extends Polymer.Element{
+    class DetailView extends Polymer.GestureEventListeners(Polymer.Element){
       static get is() { return 'detail-view'; }
       static get properties() { return {
         movieDetails: {
@@ -116,6 +131,9 @@
       handleResponse(e){
         console.log('detail Response', e.detail.response);
         this.set('movieDetails', e.detail.response);
+      }
+      previousPage(){
+        window.history.back();
       }
     }
 
