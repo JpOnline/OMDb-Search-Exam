@@ -16,6 +16,14 @@
         display: block;
         font-family: Iceland;
       }
+      #page-not-found{
+        text-align: center;
+        font-size: x-large;
+        margin: 35% 10%;
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+      }
     </style>
 
     <!-- Routing {{{ -->
@@ -35,7 +43,9 @@
     >
       <list-view name="list"></list-view>
       <detail-view name="detail" subroute={{subroute}}></detail-view>
-      <div name="pageNotFound">Sorry, I couldn't find this movie.</div>
+      <a href="/" name="pageNotFound" id="page-not-found">
+        <p>Sorry, I couldn't find this movie.</p><p>< get back to search</p>
+      </a>
     </iron-pages>
 
   </template>
