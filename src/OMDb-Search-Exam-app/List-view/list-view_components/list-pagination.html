@@ -156,7 +156,6 @@
         }
 
         classes = 'number';
-        console.log('totalPages', this.totalPages);
         // The totalPages == 3 is handled to not have the number 3 shown twice.
         if(this.page >= this.totalPages - 1 || this.totalPages == 3){
           classes += ' invisible';
@@ -175,10 +174,8 @@
           'name':'Next'
         });
         this.set('options', options);
-        console.log('pageHasChanged', this.options);
       }
       handleOption(e){
-        console.log('handleOption', e);
         let option = e.model.item.name;
         if(option === "Previous"){
           this.page--;

@@ -1,15 +1,29 @@
 # iLabSinc Exam done by João Paulo Soares
 
-The library [Polymer 2.0](https://www.polymer-project.org/) was used to create Web Components. You can serve the site locally from build/
+## Overview
+The library [Polymer 2.0](https://www.polymer-project.org/) was used to create Web Components.
+
+Besides what is descript in Task Details you can see these characteristics:
+- Responsive Design for desktop and mobile;
+- a fallback image when movies don't have poster;
+- pagination over the movie results and;
+- an error page when in a wrong url.
 
 ## To run the project
 
-Note that Node.js version 6.x or 7.x and NPM is required. 
+Note that Node.js version 6.x or 7.x and npm is required.
 
 ```bash
 npm install
 npm run polymer serve -o --open-path /
 ```
+
+## Todo
+- Indicate in the interface when data is being loaded;
+- Add a logo image;
+- Create service worker to show an error page indicating that the user is offline;
+- Load different size images depending on user device and;
+- Create a manifest to deliver the page as a Progressive Web App.
 
 # OMDb-Search-Exam
 Search the OMDb API
