@@ -19,21 +19,46 @@
       h2{
         text-align: center;
       }
-      p{
+      .overview{
         text-align: justify;
+        max-height: 250px;
+        overflow: hidden;
+      }
+      img {
+        width: 182px;
+      }
+
+      @media only screen and (max-width: 480px) {
+        img{
+          width: 92px;
+        }
+        .description {
+          font-size: inherit;
+          margin: 10px;
+        }
+        h2{
+          margin: 7px 0;
+        }
+        .overview{
+          max-height: 90px;
+        }
       }
     </style>
 
-    <img width="182" src="{{imgSrc}}" onerror="{{setErrorImg()}}"></img>
+    <img src="{{imgSrc}}" onerror="{{setErrorImg()}}"></img>
     <div class="description">
       <h2>{{movieMetaData.title}}</h2>
-      <p>{{movieMetaData.overview}}</p>
+      <p class="overview">{{movieMetaData.overview}}</p>
+      <p style="font-size: 110%;">Read more...</p>
     </div>
 
   </template>
   <script>
     class ListItem extends Polymer.Element{
       static get is() { return 'list-item'; }
+      constructor(){
+        super();
+      }
       static get properties() {
         return {
           movieMetaData: {
@@ -56,4 +81,4 @@
 
     customElements.define(ListItem.is, ListItem);
   </script>
-</dom-module >
+</dom-module>

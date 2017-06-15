@@ -139,6 +139,9 @@
   <script>
     class DetailView extends Polymer.GestureEventListeners(Polymer.Element){
       static get is() { return 'detail-view'; }
+      constructor(){
+        super();
+      }
       static get properties() { return {
         movieDetails: {
           type: Object

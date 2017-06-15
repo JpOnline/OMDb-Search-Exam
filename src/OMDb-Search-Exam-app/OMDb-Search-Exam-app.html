@@ -47,6 +47,9 @@
      */
     class OMDbSearchExamApp extends Polymer.Element {
       static get is() { return 'omdb-search-exam-app'; }
+      constructor(){
+        super();
+      }
       checkIfEmpty(page){
         if(!page) { return 'list'; }
         else { return page; }

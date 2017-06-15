@@ -10,10 +10,13 @@
         display: flex;
         justify-content: space-between;
         font-size: 150%;
-        padding: 5px 0;
+        padding: 10px 0;
       }
       .invisible{
         visibility: hidden;
+      }
+      .almost-invisible{
+        color: #ddd;
       }
       .previous-and-next{
         padding: 0px 24px;
@@ -29,6 +32,15 @@
       span{
         cursor: pointer;
         align-self: center;
+      }
+
+      @media only screen and (max-width: 480px) {
+        :host {
+          font-size: inherit;
+        }
+        .previous-and-next{
+          padding: 0;
+        }
       }
     </style> <!-- }}} -->
 
@@ -46,6 +58,9 @@
   <script>
     class ListPagination extends Polymer.GestureEventListeners(Polymer.Element){
       static get is() { return 'list-pagination'; }
+      constructor(){
+        super();
+      }
       static get properties() {
         return {
           page: {
@@ -101,7 +116,7 @@
         let options = [];
         let classes = 'previous-and-next';
         if(this.page == 1){
-          classes += ' invisible';
+          classes += ' almost-invisible';
         }
         options.push({
           'class':classes,
@@ -153,7 +168,7 @@
 
         classes = 'previous-and-next';
         if(this.page == this.totalPages){
-          classes += ' invisible';
+          classes += ' almost-invisible';
         }
         options.push({
           'class':classes,
