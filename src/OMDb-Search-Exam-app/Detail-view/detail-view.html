@@ -1,9 +1,10 @@
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../../bower_components/polymer/lib/elements/dom-repeat.html">
-<link rel="import" href="../../../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../../bower_components/polymer/lib/elements/dom-if.html">
 <link rel="import" href="../../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="../../../bower_components/iron-collapse/iron-collapse.html">
 
 <dom-module id="detail-view">
   <template>
@@ -14,7 +15,10 @@
         box-shadow: 0px 3px 18px 5px #7d7d7d;
         padding: 10px;
       }
-      .header{
+      .header-mobile{
+        display: none;
+      }
+      .header-no-mobile{
         display: flex;
         align-items: center;
         justify-content: center;
@@ -33,6 +37,7 @@
         padding: 0px 10px;
         margin-bottom: 12px;
         font-size: x-large;
+        text-align: justify;
       }
       .detail-category{
         font-size: 120%;
@@ -47,6 +52,38 @@
       .back-button span{
         font-size: 150%;
         margin-right: 4px;
+      }
+
+      @media only screen and (max-width: 480px) {
+        .header-no-mobile{
+          display: none;
+        }
+        .header-mobile{
+          display: flex;
+          flex-direction: column;
+        }
+        h1{
+          text-align: center;
+        }
+        img{
+          align-self: center;
+        }
+        .header-mobile p{
+          margin: 5px 0;
+        }
+        .overview{
+          padding: 0 5px;
+          font-size: large;
+        }
+        #collapse-button{
+          font-size: 140%;
+          margin-top: 15px;
+          border-style: solid;
+          border-color: #ececec;
+          border-radius: 10px;
+          border-bottom-width: thin;
+          padding-left: 5px;
+        }
       }
     </style> <!-- }}} -->
 
@@ -69,9 +106,9 @@
 
     <div class="container"> <!-- {{{ -->
       <div class="back-button" on-tap="previousPage"><span><</span> Back</div>
-      <div class="header"> <!-- {{{ -->
-        <img src="http://image.tmdb.org/t/p/w342{{movieDetails.poster_path}}"
-        alt="movie poster" width="280" height="420"></img>
+
+      <div class="header-no-mobile"> <!-- {{{ -->
+        <img src="{{imgSrc}}" alt="movie poster" width="280" height="420"></img>
         <div class="second-column"> <!-- {{{ -->
           <h1>{{movieDetails.title}} <br>
           <span style="font-size: 65%">{{movieDetails.tagline}}</span></h1>
@@ -131,6 +168,70 @@
            <!-- End of Details }}} -->
         </div><!-- class second-column }}}-->
       </div><!-- class header }}}-->
+
+      <div class="header-mobile"> <!-- {{{ -->
+        <h1>{{movieDetails.title}} <br>
+        <span style="font-size: 65%">{{movieDetails.tagline}}</span></h1>
+        <img src="{{imgSrc}}" alt="movie poster" width="140" height="210"></img>
+
+        <div id="collapse-button" on-tap="toggleCollapse">More details...</div>
+        <iron-collapse id="collapse">
+          <!-- Details {{{ -->
+          <template is="dom-if" if="{{notEmpty(movieDetails.genres)}}">
+            <p><span class="detail-category">Genres</span>
+            <template is="dom-repeat" items="{{movieDetails.genres}}" as="genre">
+              | {{genre.name}}
+            </template>
+             |
+            </p>
+          </template>
+
+          <!-- The information can be empty, so the detail category is not shown if so.  -->
+          <template is="dom-if" if="{{notEmpty(movieDetails.production_companies)}}">
+            <p><span class="detail-category">Production Companies</span>
+            <template is="dom-repeat" items="{{movieDetails.production_companies}}" as="company">
+              | {{company.name}}
+            </template>
+             |
+            </p>
+          </template>
+
+          <template is="dom-if" if="{{notEmpty(movieDetails.production_countries)}}">
+            <p><span class="detail-category">Production Countries</span>
+            <template is="dom-repeat" items="{{movieDetails.production_countries}}" as="country">
+              | {{country.name}}
+            </template>
+             |
+            </p>
+          </template>
+
+          <template is="dom-if" if="{{notEmpty(movieDetails.spoken_languages)}}">
+            <p><span class="detail-category">Spoken Languages</span>
+            <template is="dom-repeat" items="{{movieDetails.spoken_languages}}" as="language">
+              | {{language.name}}
+            </template>
+             |
+            </p>
+          </template>
+
+          <template is="dom-if" if="{{movieDetails.release_date}}">
+            <p><span class="detail-category">Release Date</span>
+             | {{formatDate(movieDetails.release_date)}} |</p>
+           </template>
+
+           <template is="dom-if" if="{{movieDetails.runtime}}">
+            <p><span class="detail-category">Runtime</span>
+             | {{formatTime(movieDetails.runtime)}} | </p>
+           </template>
+
+           <template is="dom-if" if="{{movieDetails.vote_average}}">
+            <p><span class="detail-category">Ratings</span>
+             | {{movieDetails.vote_average}} ({{movieDetails.vote_count}}) |</p>
+           </template>
+           <!-- End of Details }}} -->
+        </iron-collapse>
+      </div><!-- class header }}}-->
+
       <p class="overview">{{movieDetails.overview}}</p>
     </div><!-- class container }}}-->
 
@@ -145,10 +246,21 @@
       static get properties() { return {
         movieDetails: {
           type: Object
+        },
+        imgSrc: {
+          type: String,
+          computed: 'setImgSrc(movieDetails.poster_path)'
         }
       };}
       handleResponse(e){
         this.set('movieDetails', e.detail.response);
+      }
+      setImgSrc(path){
+        if(path == null){
+          return this.resolveUrl('../../../../Images/errorImg.png');
+        }else{
+          return `http://image.tmdb.org/t/p/w342/${path}`;
+        }
       }
       formatDate(releaseDate){
         // TODO: use an external library to handle date and time.
@@ -161,6 +273,9 @@
         var minutes = runtime % 60;
         minutes = minutes < 10 ? '0'+minutes : minutes; //put an extra zero if necessary.
         return hour + ':' + minutes + ':00';
+      }
+      toggleCollapse(){
+        this.shadowRoot.querySelector('#collapse').toggle();
       }
       previousPage(){
         window.history.back();
